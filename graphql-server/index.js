@@ -1,14 +1,30 @@
 const { ApolloServer, gql } = require("apollo-server");
+const pool = require("./db");
 
 let books = [
-  { title: "Clean Code", author: "Robert C. Martin" },
-  { title: "The Pragmatic Programmer", author: "Andy Hunt" },
+  {
+    id: "1",
+    title: "Clean Code",
+    author: "Robert C. Martin",
+    genre: "Technology",
+    publishedYear: 2001,
+  },
+  {
+    id: "2",
+    title: "The Pragmatic Programmer",
+    author: "Andy Hunt",
+    genre: "Software Engineering",
+    publishedYear: 1999,
+  },
 ];
 
 const typeDefs = gql`
   type Book {
+    id: ID!
     title: String
     author: String
+    genre: String
+    publishedYear: Int
   }
 
   type Query {
@@ -16,7 +32,12 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    addBook(title: String!, author: String!): Book
+    addBook(
+      title: String!
+      author: String!
+      genre: String
+      publishedYear: Int
+    ): Book
   }
 `;
 
@@ -25,8 +46,14 @@ const resolvers = {
     books: () => books,
   },
   Mutation: {
-    addBook: (_, { title, author }) => {
-      const newBook = { title, author };
+    addBook: (_, { title, author, genre, publishedyear }) => {
+      const newBook = {
+        id: Date.now().toString(),
+        title,
+        author,
+        genre,
+        publishedyear,
+      };
       books.push(newBook);
       return newBook;
     },
